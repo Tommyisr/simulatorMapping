@@ -55,7 +55,9 @@ int main(int argc, char **argv) {
         use_drone = false;
     cv::VideoCapture cap;
     cv::VideoWriter writer;
-    writer.open("./" + directory_named_time + "/mapping.avi", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30.0, cv::Size(640, 480), true);
+//    writer.open("./" + directory_named_time + "/mapping.avi", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30.0, cv::Size(640, 480), true);
+    writer.open("/home/worm/Univ/Lab/simulatorMapping/mapping.avi", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30.0, cv::Size(640, 480), true);
+
     if (use_drone) {
         //  drone.tello_stream_on();
     } else {

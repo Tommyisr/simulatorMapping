@@ -1,7 +1,7 @@
 {
   "VocabularyPath": "/home/liam/dev/rbd/simulatorMapping/Vocabulary/ORBvoc.txt",
   "DroneYamlPathSlam": "/home/liam/dev/rbd/simulatorMapping/config/tello_9F5EC2_640.yaml",
-  "offlineVideoTestPath": "/home/liam/Documents/videos/mapping.avi",
+  "offlineVideoTestPath": "//home/liam/dev/rbd/simulatorMapping/mapping.avi",
   "loadMap": true,
   "loadPartialMapPath": "/home/liam/a.bin",
   "loadMapPath": "/home/liam/Documents/slamMaps/example_mapping11/simulatorMap.bin",
