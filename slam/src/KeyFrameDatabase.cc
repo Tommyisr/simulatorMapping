@@ -127,19 +127,14 @@ void KeyFrameDatabase::erase(KeyFrame* pKF)
     unique_lock<mutex> lock(mMutex);
 
     // Erase elements in the Inverse File for the entry
-    for(DBoW2::BowVector::const_iterator vit=pKF->mBowVec.begin(), vend=pKF->mBowVec.end(); vit!=vend; vit++)
+    for(const auto& [wordId, _] : pKF->mBowVec)
     {
         // List of keyframes that share the word
-        list<KeyFrame*> &lKFs =   mvInvertedFile[vit->first];
+        auto& lKFs = mvInvertedFile[wordId];
+        auto it = std::find(lKFs.begin(), lKFs.end(), pKF);
+        if(it != lKFs.end())
+            lKFs.erase(it);
 
-        for(list<KeyFrame*>::iterator lit=lKFs.begin(), lend= lKFs.end(); lit!=lend; lit++)
-        {
-            if(pKF==*lit)
-            {
-                lKFs.erase(lit);
-                break;
-            }
-        }
     }
 }
 

@@ -8,7 +8,7 @@ std::string Auxiliary::GetGeneralSettingsPath() {
     char currentDirPath[256];
     getcwd(currentDirPath, 256);
     std::string settingPath = currentDirPath;
-    settingPath += "/../generalSettings.json";
+    settingPath += "/../../generalSettings.json";
     return settingPath;
 }
 

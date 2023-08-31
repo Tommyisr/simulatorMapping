@@ -89,8 +89,10 @@ const int EDGE_THRESHOLD = 19;
 static float IC_Angle(const Mat& image, Point2f pt,  const vector<int> & u_max)
 {
     int m_01 = 0, m_10 = 0;
+    int y_rounded = cvRound(pt.y);
+    int x_rounded = cvRound(pt.x);
 
-    const uchar* center = &image.at<uchar> (cvRound(pt.y), cvRound(pt.x));
+    const uchar* center = image.ptr<uchar>(y_rounded, x_rounded);
 
     // Treat the center line differently, v=0
     for (int u = -HALF_PATCH_SIZE; u <= HALF_PATCH_SIZE; ++u)
@@ -103,9 +105,12 @@ static float IC_Angle(const Mat& image, Point2f pt,  const vector<int> & u_max)
         // Proceed over the two lines
         int v_sum = 0;
         int d = u_max[v];
+        int v_step = v * step;
+        const uchar* center_plus = center + v_step;
+        const uchar* center_minus = center - v_step;
         for (int u = -d; u <= d; ++u)
         {
-            int val_plus = center[u + v*step], val_minus = center[u - v*step];
+            int val_plus = center_plus[u], val_minus = center_minus[u];
             v_sum += (val_plus - val_minus);
             m_10 += u * (val_plus + val_minus);
         }
@@ -124,7 +129,9 @@ static void computeOrbDescriptor(const KeyPoint& kpt,
     float angle = (float)kpt.angle*factorPI;
     float a = (float)cos(angle), b = (float)sin(angle);
 
-    const uchar* center = &img.at<uchar>(cvRound(kpt.pt.y), cvRound(kpt.pt.x));
+    int y_rounded = cvRound(kpt.pt.y);
+    int x_rounded = cvRound(kpt.pt.x);
+    const uchar* center = img.ptr<uchar>(y_rounded, x_rounded);
     const int step = (int)img.step;
 
     #define GET_VALUE(idx) \
@@ -1135,8 +1142,7 @@ void ORBextractor::operator()( InputArray _image, InputArray _mask, vector<KeyPo
         _keypoints.insert(_keypoints.end(), keypoints.begin(), keypoints.end());
     }
     end = get_time2();
-    //std::cout << "descriptors: " << get_time_diff2(start, end) << "\n";
-    //std::cout << "only descriptors: " << total_desc << "\n";
+
 }
 
 void ORBextractor::ComputePyramid(cv::Mat image)

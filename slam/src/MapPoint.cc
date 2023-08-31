@@ -234,51 +234,42 @@ void MapPoint::SetObservations(std::vector<KeyFrame*> spKeyFrames)
 {
     
     long unsigned int id, kfRef_id; size_t size;    
-    //cout << "KF" << mnId <<" valid indexes-" << endl;
-    int j = 0; 
+
     bool found_reference = false;
     kfRef_id = mref_KfId_pair.first;
     bool is_ref_valid = mref_KfId_pair.second;
 
 
-    for (map<long unsigned int, size_t>::iterator it = mObservations_nId.begin(); it != mObservations_nId.end(); j++,++it) {
-        id = it->first;
-        size = it->second;        
-        {
-            for(std::vector<KeyFrame*>::iterator mit=spKeyFrames.begin(); mit !=spKeyFrames.end(); mit++)
-            {
-                KeyFrame* pKf = *mit;
-                //cout << "[" << pKf->mnId << "]";               
-                if(id == pKf->mnId)
-                {                    
-                    //cout << "[" << id <<"]";                    
-                    mObservations[pKf] = size;
-                    //id = -1;
-                    break;
-                }
-            }
-            
-        }
+    for (const auto& observation : mObservations_nId)
+    {
+        id = observation.first;
+        size = observation.second;
 
+        auto it = std::find_if(spKeyFrames.begin(), spKeyFrames.end(),
+                               [id](const KeyFrame* pKf) { return id == pKf->mnId; });
+
+        if (it != spKeyFrames.end())
+        {
+            mObservations[*it] = size;
+        }
     }
 
-    for(std::vector<KeyFrame*>::iterator mit=spKeyFrames.begin(); mit !=spKeyFrames.end(); mit++)
+    if (is_ref_valid)
     {
-       KeyFrame* pKf = *mit;
-       if (is_ref_valid && kfRef_id == pKf->mnId )
-       {
-            // Set the refernce Keyframe
-            mpRefKF = pKf;
+        auto ref_it = std::find_if(spKeyFrames.begin(), spKeyFrames.end(),
+                                   [kfRef_id](const KeyFrame* pKf) { return kfRef_id == pKf->mnId; });
+
+        if (ref_it != spKeyFrames.end())
+        {
+            mpRefKF = *ref_it;
             found_reference = true;
-       }
-   }
+        }
+    }
 
     if (!found_reference)
     {
-            mpRefKF = static_cast<KeyFrame*>(NULL);
-            //cout << "refernce KF - " << kfRef_id << "is not found for mappoint " << mnId << endl;  
-            // Dummy KF
-            //mpRefKF = new KeyFrame();  
+            mpRefKF = nullptr;
+
     }
 }
 
